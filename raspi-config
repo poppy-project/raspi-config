@@ -795,6 +795,17 @@ do_serial() {
   fi
 }
 
+disable_serial() {
+  SSTATUS=disabled
+  HSTATUS=enabled
+  sed -i $CMDLINE -e "s/console=ttyAMA0,[0-9]\+ //"
+  sed -i $CMDLINE -e "s/console=serial0,[0-9]\+ //"
+  set_config_var enable_uart 1 $CONFIG
+
+  echo "The serial login shell is $SSTATUS"
+  echo "The serial interface is $HSTATUS"
+}
+
 disable_raspi_config_at_boot() {
   if [ -e /etc/profile.d/raspi-config.sh ]; then
     rm -f /etc/profile.d/raspi-config.sh
@@ -1543,8 +1554,7 @@ do
     exit $?
     ;;
   --disable-serial-log)
-    INTERACTIVE=False
-    do_serial 1
+    disable_serial
     exit $?
     ;;
   nonint)
